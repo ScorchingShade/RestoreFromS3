@@ -1,10 +1,13 @@
 #!/bin/bash
 ##################
 #The purpose of the script is to--
-# To Restore the snapshots on local
+# To Restore the snapshots on local for mysql and mongodb dumps
 # 
 ##################
 
+############Custom vars################################################################################
+SCRIPT_STATE="run"
+#######MySql settings##################################################################################
 SOURCE_BUCKET_SQL="s3://ankush-dump-3/latestmysql.gz"
 TMP=`mkdir -p /tmp/Gzip && cd /tmp/Gzip`
 FIND_TMP=`find /tmp/Gzip/ |xargs|awk '{print $1}'`
@@ -12,13 +15,22 @@ SQL_DIR="/tmp/Gzip/"
 mysqlDIR="/tmp/Gzip/latestmysql.sql"
 Db_NAME="ANKUSH_Intern_mysql"
 
+MYSQLPASS=""
+MYSQL_USER=""
+MYSQL_HOST=""
+
+#######Mongo Settings####################################################################################
 SOURCE_BUCKET_Mongo="s3://ankush-dump-3/Latestmongo.tar.gz"
 TMP1=`mkdir -p /tmp/Gzip1 && cd /tmp/Gzip1`
 FIND_TMP1=`find /tmp/Gzip1/ |xargs|awk '{print $1}'`
 Mongo_DIR="/tmp/Gzip1/"
 For_TAR="/tmp/Gzip1/Latestmongo.tar.gz"
+mongoDbName="ankushKaDb"
 
-
+MONGO_HOST=""
+MONGO_PORT=""
+MONGO_USER=""
+MONGO_PASS=""
 
 ################################progress bar###############################################################
 progress_bar()
@@ -115,17 +127,21 @@ function mysqlRestore(){
 		printf "Restoring the dump to your mysqldb named $Db_NAME......................\n"
 		progress_bar 2
 		sudo mysql < $SQL_DIR'latestmysql.sql'
-		
+
+		##################################the complete MySql restore command#####################################
+		#sudo mysql -u $MYSQL_USER -p $MYSQLPASS -h $MYSQL_HOST< $SQL_DIR'latestmysql.sql'
+		#########################################################################################################
+
 		printf "Removing Temporary Folder and files......................\n"
 		progress_bar 1
-		rm -r /tmp/Gzip/		
+		rm -r /tmp/Gzip/
 		
 		printf "##############################################Successfull##############################################\n\n\n"
 
 	fi
 }
 
-
+##restore your mongo dump--------------
 function mongolRestore(){
 
 
@@ -133,16 +149,42 @@ function mongolRestore(){
 	then 
 		printf "Switching Directories temporarily to do some work here.....................\n"
 		echo $TMP1
+		
 		printf "Downloading Files to Local Directory.\n"
+		progress_bar 5
 		echo `aws s3 cp $SOURCE_BUCKET_Mongo $Mongo_DIR`
 		printf "Extracting the dump file.\n"
-		tar -xzvf $For_TAR --directory /tmp/Gzip1
-	
+		progress_bar 2
+		tar -xzvf $For_TAR --directory $Mongo_DIR
 
-
+		########The extracted file has the database created in MongoDumps folder from SyncScript, comment out the below line if you
+		########don't want to move to the MongoDumps folder to access the dump file
+		cd $Mongo_DIR"MongoDumps"
 		
+		####delete "MongoDumps/ if you don't have any MongoDumps folder when extracting the tar"
+		printf "Restoring the dump to your mysqldb named $Db_NAME......................\n"
+		progress_bar 2
+		mongorestore --db $mongoDbName $Mongo_DIR"MongoDumps/"$mongoDbName"/"
+
+		####################Mongo Restore with all the parameters, for a host server on different machine#############################################################
+		#mongorestore --host $MONGO_HOST --port $MONGO_PORT --username $MONGO_USER --password '"$MONGO_PASS"' --db $mongoDbName $Mongo_DIR"MongoDumps/"$mongoDbName"/"
+		##############################################################################################################################################################
+
+		printf "Removing Temporary Folder and files......................\n"
+		progress_bar 1
+		rm -r /tmp/Gzip1/		
+		
+		printf "##############################################Successfull##############################################\n\n\n"		
 		
 	fi
 }
 
-mongolRestore
+
+case $SCRIPT_STATE in 
+	"run")
+		mysqlRestore
+		mongolRestore
+	;;
+	 *)
+  	;;
+esac
