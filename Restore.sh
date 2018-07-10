@@ -6,7 +6,9 @@
 ##################
 
 ############Custom vars################################################################################
-SCRIPT_STATE="run"
+SCRIPT_STATE=$1
+SQL_PATH="mysql"
+MONGO_PATH="mongorestore"
 #######MySql settings##################################################################################
 SOURCE_BUCKET_SQL="s3://ankush-dump-3/latestmysql.gz"
 TMP=`mkdir -p /tmp/Gzip && cd /tmp/Gzip`
@@ -118,16 +120,34 @@ function mysqlRestore(){
 		printf "Downloading Files to Local Directory....................\n"
 		progress_bar 5
 		echo `aws s3 cp $SOURCE_BUCKET_SQL $SQL_DIR`
-		
+		if [ $? -eq 0 ];then	
+			printf "files Downloaded Successfully\n"
+		else
+ 			echo "Error in Contacting aws...program will terminate"
+ 			exit 1
+		fi
+
 		printf "Extracting the dump file\n"
 		gunzip -k $SQL_DIR'latestmysql.gz'
-		progress_bar 2
+		if [ $? -eq 0 ];then
+			progress_bar 2	
+			printf "File extracted Successfully\n"
+		else
+ 			echo "Error in extraction...program will terminate"
+ 			exit 1
+		fi
+		
 		mv $SQL_DIR'latestmysql' $SQL_DIR'latestmysql.sql' &&  sed -i -e '1iUse '"$Db_NAME"' \' $SQL_DIR'latestmysql.sql' 
 		
 		printf "Restoring the dump to your mysqldb named $Db_NAME......................\n"
 		progress_bar 2
-		sudo mysql < $SQL_DIR'latestmysql.sql'
-
+		sudo $SQL_PATH < $SQL_DIR'latestmysql.sql'
+		if [ $? -eq 0 ];then
+		printf "Restored dump Successfully\n"
+		else
+ 			echo "Error in restoring dump...program will terminate"
+ 			exit 1
+		fi
 		##################################the complete MySql restore command#####################################
 		#sudo mysql -u $MYSQL_USER -p $MYSQLPASS -h $MYSQL_HOST< $SQL_DIR'latestmysql.sql'
 		#########################################################################################################
@@ -153,10 +173,21 @@ function mongolRestore(){
 		printf "Downloading Files to Local Directory.\n"
 		progress_bar 5
 		echo `aws s3 cp $SOURCE_BUCKET_Mongo $Mongo_DIR`
+		if [ $? -eq 0 ];then
+			printf "Files Downloaded Successfully\n"
+		else
+ 			echo "Error in Contacting aws...program will terminate"
+ 			exit 1
+		fi
 		printf "Extracting the dump file.\n"
 		progress_bar 2
 		tar -xzvf $For_TAR --directory $Mongo_DIR
-
+		if [ $? -eq 0 ];then	
+			printf "Extraction completed Successfully\n"
+		else
+ 			echo "Error in Extraction...program will terminate"
+ 			exit 1
+		fi
 		########The extracted file has the database created in MongoDumps folder from SyncScript, comment out the below line if you
 		########don't want to move to the MongoDumps folder to access the dump file
 		cd $Mongo_DIR"MongoDumps"
@@ -164,8 +195,13 @@ function mongolRestore(){
 		####delete "MongoDumps/ if you don't have any MongoDumps folder when extracting the tar"
 		printf "Restoring the dump to your mysqldb named $Db_NAME......................\n"
 		progress_bar 2
-		mongorestore --db $mongoDbName $Mongo_DIR"MongoDumps/"$mongoDbName"/"
-
+		$MONGO_PATH --db $mongoDbName $Mongo_DIR"MongoDumps/"$mongoDbName"/"
+		if [ $? -eq 0 ];then	
+			printf "Dump restored Successfully\n"
+		else
+ 			echo "Error in restoring dump...program will terminate"
+ 			exit 1
+		fi
 		####################Mongo Restore with all the parameters, for a host server on different machine#############################################################
 		#mongorestore --host $MONGO_HOST --port $MONGO_PORT --username $MONGO_USER --password '"$MONGO_PASS"' --db $mongoDbName $Mongo_DIR"MongoDumps/"$mongoDbName"/"
 		##############################################################################################################################################################
@@ -181,8 +217,10 @@ function mongolRestore(){
 
 
 case $SCRIPT_STATE in 
-	"run")
+	"restoremysql")
 		mysqlRestore
+	;;
+	"restoremongo")
 		mongolRestore
 	;;
 	 *)
