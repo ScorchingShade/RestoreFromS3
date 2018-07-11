@@ -216,13 +216,205 @@ function mongolRestore(){
 }
 
 
-case $SCRIPT_STATE in 
-	"restoremysql")
+
+function myvars(){
+	####Main function to call methods starts here####### DO NOT TOUCH THIS!!! AT ALLL###################
+	printf "Do you wish to configure default settings for SyncAndDump S3 (recommended) ? (press y for yes and n for no): "
+	read Defresponse
+	if [ "$Defresponse" = "y" ] || [ "$Defresponse" = "yes" ] || [ "$Defresponse" = "Y" ] || [ "$Defresponse" = "Yes" ] || [ "$Defresponse" = "YES" ];then
+		printf "Enter the value for Mysql Hostname ($MYSQL_HOST):"
+		read host
+		
+		if [ "$host" ]; then
+		  		MYSQL_HOST=$host
+	
+		  	fi  	
+
+
+		printf "Enter the value for Mysql Username ($MYSQL_USER):"
+		read user
+		
+		if [ "$user" ]; then
+		  		MYSQL_USER=$user
+		  	fi  	
+  		
+  		printf "Enter the value for Mysql password ($MYSQLPASS):"
+		read pass
+		
+		if [ "$pass" ]; then
+		  		MYSQLPASS=$pass
+		  	fi  	
+
+		printf "Enter the value for Mongodb Hostname ($MONGO_HOST):"  	
+		read hostm
+		if [ "$hostm" ]; then
+		  		MONGO_HOST=$hostm
+	
+		  	fi  	
+
+
+		printf "Enter the value for Mongodb Username ($MONGO_USER):"
+		read userm
+		
+		if [ "$userm" ]; then
+		  		MONGO_USER=$userm
+		  	fi  	
+  		
+  		printf "Enter the value for Mongodb password ($MONGO_PASS):"
+		read passm
+		
+		if [ "$passm" ]; then
+		  		MONGO_PASS=$passm
+		  	fi  	
+	
+	printf "Enter the value for Mongodb port ($MONGO_PORT):"
+		read port
+		
+		if [ "$port" ]; then
+		  		MONGO_PORT=$port
+		  	fi  	
+
+	printf "Enter the value for Mongodb path ($MONGO_PATH):"
+		read pathm
+		
+		if [ "$pathm" ]; then
+		  		MONGO_PATH=$pathm
+		  	fi  	
+
+	printf "Enter the value for Mysql path ($SQL_PATH):"
+		read path
+		
+		if [ "$path" ]; then
+		  		SQL_PATH=$path
+		  	fi  	
+
+	printf "Enter the value for aws path ($AWS_PATH):"
+		read patha
+		
+		if [ "$patha" ]; then
+		  		AWS_PATH=$patha
+		  	fi  	
+
+	printf "Enter the value for Source bucket of sql restore ($SOURCE_BUCKET_SQL):"
+		read sourceb
+		
+		if [ "$sourceb" ]; then
+		  		SOURCE_BUCKET_SQL=$sourceb
+		  	fi  	
+
+	printf "Enter the value for Source Bucket of mongodb restore ($DESTINATION_BUCKET):"
+		read destb
+		
+		if [ "$destb" ]; then
+		  		DESTINATION_BUCKET=$destb
+		  	fi  	
+
+
+	printf "Enter the value for ACL Policy ($ACL_POLICY):"
+		read policy
+		
+		if [ "$policy" ]; then
+		  		ACL_POLICY=$policy
+		  	fi  	
+
+	printf "Enter the value for Dump upload bucket ($UPLOAD_BUCKET):"
+		read upBucket
+		
+		if [ "$upBucket" ]; then
+		  		UPLOAD_BUCKET=$upBucket
+		  	fi 
+
+	printf "Enter the value for latest mysql dump name ($LATEST_TAG):"
+		read latesttag
+		
+		if [ "$latesttag" ]; then
+		  		LATEST_TAG=$latesttag
+		  	fi 
+
+	printf "Enter the value for latest mongodb dump name ($LATEST_TAG_MONGO):"
+		read latesttagm
+		
+		if [ "$latesttagm" ]; then
+		  		LATEST_TAG_MONGO=$latesttagm
+		  	fi 
+
+
+	printf "Enter the value for mongodb database name ($MD_DB_NAME):"
+		read dbnamem
+		
+		if [ "$dbnamem" ]; then
+		  		MD_DB_NAME=$dbnamem
+		  	fi 
+
+
+	printf "Enter the value for latest mysql database name ($DATABASE_NAME):"
+		read dbname
+		
+		if [ "$dbname" ]; then
+		  		DATABASE_NAME=$dbname
+		  	fi 
+
+
+		  	printf "Enter your choice from below: \n1)Press 1 for mysql restore \n2)Press 2 for mongodb restore\n"
+		read choice
+		case $choice in 
+	"1")
 		mysqlRestore
 	;;
-	"restoremongo")
+	
+	"2")
 		mongolRestore
 	;;
-	 *)
-  	;;
+	 
+	*)
+	;;
+	 
 esac
+
+elif [ "$Defresponse" = "n" ] || [ "$Defresponse" = "no" ] || [ "$Defresponse" = "N" ] || [ "$Defresponse" = "No" ] || [ "$Defresponse" = "NO" ];then
+		printf "Enter your choice from below: \n1)Press 1 for mysql restore \n2)Press 2 for mongodb restore\n"
+		read choice
+		case $choice in 
+	"1")
+		mysqlRestore
+	;;
+	
+	"2")
+		mongolRestore
+	;;
+	 
+	*)
+	;;
+	 
+esac
+
+
+else 
+	printf  "Wrong choice...\n"
+	fi
+}
+
+ printf "\nWelcome to SRestore! A complete solution for automating all your mysql and mongodb Restores from amazon s3!"
+ printf "\nThis software requires mysql or mongodb installed on your local machine or a server. For further details read the official documentation at:-\n https://github.com/ScorchingShade/RestoreFromS3\n Enjoy\n"
+	while true
+	do
+		myvars
+		printf "Do you wish to continue?(y/n):\n"
+		read choice
+
+		if [ "$choice" = "n" ] || [ "$choice" = "N" ] || [ "$choice" = "no" ] || [ "$choice" = "NO" ] || [ "$choice" = "No" ];then
+			printf "Cya later!\n"
+			exit
+		
+		elif [ "$choice" = "y" ] || [ "$choice" = "Y" ] || [ "$choice" = "yes" ] || [ "$choice" = "YES" ] || [ "$choice" = "Yes" ];then
+			continue
+		
+		else 
+			printf "Wrong choice , program will now terminate...\n"
+			exit
+		fi
+
+	done
+
+
+
