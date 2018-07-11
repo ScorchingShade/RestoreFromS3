@@ -310,48 +310,20 @@ function myvars(){
 		  	fi  	
 
 
-	printf "Enter the value for ACL Policy ($ACL_POLICY):"
-		read policy
-		
-		if [ "$policy" ]; then
-		  		ACL_POLICY=$policy
-		  	fi  	
 
-	printf "Enter the value for Dump upload bucket ($UPLOAD_BUCKET):"
-		read upBucket
-		
-		if [ "$upBucket" ]; then
-		  		UPLOAD_BUCKET=$upBucket
-		  	fi 
-
-	printf "Enter the value for latest mysql dump name ($LATEST_TAG):"
-		read latesttag
-		
-		if [ "$latesttag" ]; then
-		  		LATEST_TAG=$latesttag
-		  	fi 
-
-	printf "Enter the value for latest mongodb dump name ($LATEST_TAG_MONGO):"
-		read latesttagm
-		
-		if [ "$latesttagm" ]; then
-		  		LATEST_TAG_MONGO=$latesttagm
-		  	fi 
-
-
-	printf "Enter the value for mongodb database name ($MD_DB_NAME):"
+	printf "Enter the value for mongodb database name ($mongoDbName):"
 		read dbnamem
 		
 		if [ "$dbnamem" ]; then
-		  		MD_DB_NAME=$dbnamem
+		  		mongoDbName=$dbnamem
 		  	fi 
 
 
-	printf "Enter the value for latest mysql database name ($DATABASE_NAME):"
+	printf "Enter the value for latest mysql database name ($Db_NAME):"
 		read dbname
 		
 		if [ "$dbname" ]; then
-		  		DATABASE_NAME=$dbname
+		  		Db_NAME=$dbname
 		  	fi 
 
 
