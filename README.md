@@ -28,7 +28,7 @@ To use the software, use the command-<br>
 Additional features include support to connect to a db on a server...uncomment the line number 152 and 206 and comment the lines 144 and 198 to include support for contacting a db on external server.
 
 ##### Command for mods
-vim /snap/restore-dump-s3/<Revision-ver>/bin/Restore.sh
+vim /snap/restore-dump-s3/#Revision-ver#/bin/Restore.sh
 
 
 ###### Support more development
