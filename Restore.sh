@@ -223,7 +223,7 @@ function myvars(){
 	read Defresponse
 	if [ "$Defresponse" = "y" ] || [ "$Defresponse" = "yes" ] || [ "$Defresponse" = "Y" ] || [ "$Defresponse" = "Yes" ] || [ "$Defresponse" = "YES" ];then
 		
-		printf "Press one for Mysql configurations, press two for mongodb configurations, press 3 for AWS configurations:\n1) MYSQL\n2) Mongodb\n3) AWS\n"
+		printf "Press one for Mysql configurations, press two for mongodb configurations:\n1) MYSQL\n2) Mongodb\n"
 		read Def2
 		if [ "$Def2" = "1" ];then
 
@@ -264,6 +264,21 @@ function myvars(){
 		if [ "$path" ]; then
 		  		SQL_PATH=$path
 		  	fi  	
+
+	printf "Enter the value for aws path ($AWS_PATH):"
+		read patha
+		
+		if [ "$patha" ]; then
+		  		AWS_PATH=$patha
+		  	fi  	
+
+	printf "Enter the value for Source bucket of sql restore ($SOURCE_BUCKET_SQL):"
+		read sourceb
+		
+		if [ "$sourceb" ]; then
+		  		SOURCE_BUCKET_SQL=$sourceb
+		  	fi  	
+
 		  		  	
 	elif [ "$Def2" = "2" ];then
 
@@ -310,8 +325,7 @@ function myvars(){
 		  		mongoDbName=$dbnamem
 		  	fi 
 
-	elif [ "$Def2" = "3" ];then
-
+	
 	printf "Enter the value for aws path ($AWS_PATH):"
 		read patha
 		
@@ -319,13 +333,7 @@ function myvars(){
 		  		AWS_PATH=$patha
 		  	fi  	
 
-	printf "Enter the value for Source bucket of sql restore ($SOURCE_BUCKET_SQL):"
-		read sourceb
-		
-		if [ "$sourceb" ]; then
-		  		SOURCE_BUCKET_SQL=$sourceb
-		  	fi  	
-
+	
 	printf "Enter the value for Source Bucket of mongodb restore ($DESTINATION_BUCKET):"
 		read destb
 		
@@ -349,7 +357,7 @@ fi
 		mongolRestore
 	;;
 	 
-	*)
+	*) printf "Invalid choice..try again!\n"
 	;;
 	 
 esac
@@ -366,7 +374,7 @@ elif [ "$Defresponse" = "n" ] || [ "$Defresponse" = "no" ] || [ "$Defresponse" =
 		mongolRestore
 	;;
 	 
-	*)
+	*) printf "Invalid choice..try again!\n"
 	;;
 	 
 esac
