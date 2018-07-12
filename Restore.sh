@@ -161,7 +161,7 @@ function mysqlRestore(){
 	fi
 }
 
-##restore your mongo dump--------------
+##restore your mongo dump---------------
 function mongolRestore(){
 
 
@@ -222,6 +222,11 @@ function myvars(){
 	printf "Do you wish to configure default settings for SyncAndDump S3 (recommended) ? (press y for yes and n for no): "
 	read Defresponse
 	if [ "$Defresponse" = "y" ] || [ "$Defresponse" = "yes" ] || [ "$Defresponse" = "Y" ] || [ "$Defresponse" = "Yes" ] || [ "$Defresponse" = "YES" ];then
+		
+		printf "Press one for Mysql configurations, press two for mongodb configurations, press 3 for AWS configurations:\n1) MYSQL\n2) Mongodb\n3) AWS\n"
+		read Def2
+		if [ "$Def2" = "1" ];then
+
 		printf "Enter the value for Mysql Hostname ($MYSQL_HOST):"
 		read host
 		
@@ -244,6 +249,23 @@ function myvars(){
 		if [ "$pass" ]; then
 		  		MYSQLPASS=$pass
 		  	fi  	
+
+		printf "Enter the value for latest mysql database name ($Db_NAME):"
+		read dbname
+		
+		if [ "$dbname" ]; then
+		  		Db_NAME=$dbname
+		  	fi 
+
+
+		printf "Enter the value for Mysql path ($SQL_PATH):"
+		read path
+		
+		if [ "$path" ]; then
+		  		SQL_PATH=$path
+		  	fi  	
+		  		  	
+	elif [ "$Def2" = "2" ];then
 
 		printf "Enter the value for Mongodb Hostname ($MONGO_HOST):"  	
 		read hostm
@@ -281,12 +303,14 @@ function myvars(){
 		  		MONGO_PATH=$pathm
 		  	fi  	
 
-	printf "Enter the value for Mysql path ($SQL_PATH):"
-		read path
+	printf "Enter the value for mongodb database name ($mongoDbName):"
+		read dbnamem
 		
-		if [ "$path" ]; then
-		  		SQL_PATH=$path
-		  	fi  	
+		if [ "$dbnamem" ]; then
+		  		mongoDbName=$dbnamem
+		  	fi 
+
+	elif [ "$Def2" = "3" ];then
 
 	printf "Enter the value for aws path ($AWS_PATH):"
 		read patha
@@ -309,25 +333,12 @@ function myvars(){
 		  		DESTINATION_BUCKET=$destb
 		  	fi  	
 
+	else
+		printf "Invalid choice!\n"
 
+fi
 
-	printf "Enter the value for mongodb database name ($mongoDbName):"
-		read dbnamem
-		
-		if [ "$dbnamem" ]; then
-		  		mongoDbName=$dbnamem
-		  	fi 
-
-
-	printf "Enter the value for latest mysql database name ($Db_NAME):"
-		read dbname
-		
-		if [ "$dbname" ]; then
-		  		Db_NAME=$dbname
-		  	fi 
-
-
-		  	printf "Enter your choice from below: \n1)Press 1 for mysql restore \n2)Press 2 for mongodb restore\n"
+		printf "Enter your choice from below: \n1)Press 1 for mysql restore \n2)Press 2 for mongodb restore\n"
 		read choice
 		case $choice in 
 	"1")
